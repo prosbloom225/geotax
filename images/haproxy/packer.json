@@ -1,0 +1,46 @@
+{
+    "variables": {
+        "account_file": "",
+        "project_id": "kohls-eta-finance-hle"
+    },
+    "builders": [
+        {
+            "type": "googlecompute",
+            "account_file": "{{user `account_file`}}",
+            "project_id": "{{user `project_id`}}",
+            "source_image_project_id": "kohls-xpn-network",
+            "source_image": "kohls-rhel7-haproxy-consul-byol",
+            "zone": "us-central1-c",
+            "ssh_username": "root"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "# Make a dir we need",
+                "mkdir -p /etc/consul.d",
+                "mkdir -p /etc/haproxy"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "consul_template.service",
+            "destination": "/etc/systemd/system/consul_template.service"
+        },
+        {
+            "type": "file",
+            "source": "consul_template_start.sh",
+            "destination": "/usr/bin/consul_template_start.sh"
+        },
+        {
+            "type": "file",
+            "source": "consul_servers.sh",
+            "destination": "/usr/bin/consul_servers.sh"
+        },
+        {
+            "type": "file",
+            "source": "haproxy.ctmpl",
+            "destination": "/etc/consul-template.d/haproxy.ctmpl"
+        }
+}
